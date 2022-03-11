@@ -1,0 +1,138 @@
+<p-table
+  [columns]="selectedColumns"
+  [value]="products"
+  responsiveLayout="scroll"
+  dataKey="name"
+>
+  <ng-template pTemplate="caption">
+    <p-multiSelect
+      [options]="cols"
+      [(ngModel)]="selectedColumns"
+      optionLabel="header"
+      selectedItemsLabel="{0} columns selected"
+      [style]="{ minWidth: '400px' }"
+      placeholder="Choose Columns"
+    ></p-multiSelect>
+    <!-- <p-dropdown
+      [options]="filters"
+      [(ngModel)]="selectedFilter"
+      optionLabel="filterKey"
+      [style]="{ minWidth: '400px' }"
+      placeholder="FILTERS"
+      (onChange)="onFilterChange($event)"
+      (onclick)="op.toggle($event)"
+    >
+    </p-dropdown> -->
+    <p-button
+      [label]="selectedProduct ? selectedProduct.name : 'Select a Product'"
+      icon="pi pi-search"
+      (click)="op.toggle($event)"
+    ></p-button>
+    <p-overlayPanel #op [showCloseIcon]="true" [style]="{ width: '450px' }">
+      <div *ngFor="let filter of filters">
+        <tr>
+          <td>
+            <a
+              [(ngModel)]="filter.filterValue"
+              (onlick)="onFilterChange($event, filter.filterValue)"
+              >{{ filter.filterKey }}</a
+            >
+          </td>
+        </tr>
+      </div>
+    </p-overlayPanel>
+    <p-dropdown
+      [options]="views"
+      [(ngModel)]="selectedView"
+      optionLabel="viewname"
+      [style]="{ minWidth: '400px' }"
+      placeholder="VIEWS"
+    ></p-dropdown>
+  </ng-template>
+  <ng-template pTemplate="header" let-columns>
+    <tr>
+      <th style="width: 3rem">
+        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+      </th>
+      <th style="width: 3rem"></th>
+      <th *ngFor="let col of columns">
+        {{ col.header }}
+      </th>
+    </tr>
+  </ng-template>
+  <ng-template
+    pTemplate="body"
+    let-product
+    let-columns="columns"
+    let-expanded="expanded"
+  >
+    <tr>
+      <td>
+        <p-tableCheckbox [value]="products"></p-tableCheckbox>
+      </td>
+      <td>
+        <button
+          type="button"
+          pButton
+          pRipple
+          [pRowToggler]="product"
+          class="p-button-text p-button-rounded p-button-plain"
+          [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+        ></button>
+      </td>
+      <td *ngFor="let col of columns">
+        {{ product[col.field] }}
+      </td>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="rowexpansion" let-product>
+    <tr>
+      <td colspan="7">
+        <div class="p-p-3">
+          <p-table [value]="product.orders" dataKey="id">
+            <ng-template pTemplate="header">
+              <tr>
+                <th pSortableColumn="id">
+                  Id <p-sortIcon field="price"></p-sortIcon>
+                </th>
+                <th pSortableColumn="customer">
+                  Customer <p-sortIcon field="customer"></p-sortIcon>
+                </th>
+                <th pSortableColumn="date">
+                  Date <p-sortIcon field="date"></p-sortIcon>
+                </th>
+                <th pSortableColumn="amount">
+                  Amount <p-sortIcon field="amount"></p-sortIcon>
+                </th>
+                <th pSortableColumn="stats">
+                  Status <p-sortIcon field="status"></p-sortIcon>
+                </th>
+                <th style="width: 4rem"></th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-order>
+              <tr>
+                <td>{{ order.id }}</td>
+                <td>{{ order.customer }}</td>
+                <td>{{ order.id }}</td>
+                <td>{{ order.amount | currency: 'USD' }}</td>
+                <td>
+                  <span
+                    [class]="'order-badge order-' + order.status.toLowerCase()"
+                    >{{ order.status }}</span
+                  >
+                </td>
+                <td><p-button type="button" icon="pi pi-search"></p-button></td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+              <tr>
+                <td colspan="6">There are no order for this product yet.</td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
